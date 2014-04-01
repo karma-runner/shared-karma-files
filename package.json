@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/aymericbeaumet/karma-common.git"
+    "url": "git://github.com/karma-runner/common.git"
   },
   "author": "Aymeric Beaumet <aymeric@beaumet.me>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aymericbeaumet/karma-common/issues"
+    "url": "https://github.com/karma-runner/common/issues"
   },
-  "homepage": "https://github.com/aymericbeaumet/karma-common"
+  "homepage": "https://github.com/karma-runner/common"
 }
