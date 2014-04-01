@@ -1,6 +1,6 @@
 {
   "node": true,
-  "quotmark": 'single',
+  "quotmark": "single",
   "bitwise": true,
   "freeze": true,
   "indent": 2,
