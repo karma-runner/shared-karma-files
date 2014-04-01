@@ -1,0 +1,19 @@
+{
+  "name": "karma-common",
+  "version": "0.0.0",
+  "description": "This repository centralizes all the common files existing in the Karma projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aymericbeaumet/karma-common.git"
+  },
+  "author": "Aymeric Beaumet <aymeric@beaumet.me> (http://beaumet.me/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aymericbeaumet/karma-common/issues"
+  },
+  "homepage": "https://github.com/aymericbeaumet/karma-common"
+}
