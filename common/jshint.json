@@ -1,4 +1,5 @@
 {
+  "node": true,
   "quotmark": 'single',
   "bitwise": true,
   "freeze": true,
