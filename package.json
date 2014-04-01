@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git://github.com/aymericbeaumet/karma-common.git"
   },
-  "author": "Aymeric Beaumet <aymeric@beaumet.me> (http://beaumet.me/)",
+  "author": "Aymeric Beaumet <aymeric@beaumet.me>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/aymericbeaumet/karma-common/issues"
