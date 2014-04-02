@@ -1,5 +1,5 @@
 {
-  "name": "karma-common",
+  "name": "common",
   "version": "0.0.0",
   "description": "This repository centralizes all the common files existing in the Karma projects.",
   "private": true,

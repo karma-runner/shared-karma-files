@@ -1,4 +1,4 @@
-# karma-common
+# common
 
 This repository centralizes all the common files existing in the Karma projects.
 
