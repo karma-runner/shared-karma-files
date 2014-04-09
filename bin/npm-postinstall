@@ -1,0 +1,123 @@
+/*
+ * This script is called once the package is installed. It looks for the first
+ * package.json file requiring this very package and use this directory as the
+ * base directory to install the symbolic links.
+ */
+
+var fs = require('fs');
+var path = require('path');
+
+var PACKAGE_NAME = 'common';
+var PACKAGE_REPO_REGEX = /:\/\/github.com\/karma-runner\/common(?:\.git)?$/;
+
+/**
+ * This function returns the name of the current package. The package file will
+ * only be loaded once due to the Node.js require mechanism.
+ */
+function getCurrentPackageName()
+{
+  var currentPackageJSONPath = path.normalize(path.resolve(path.join(__dirname, '..', 'package.json')));
+  var packageJSON = require(currentPackageJSONPath);
+
+  return packageJSON.name;
+}
+
+/**
+ * Return the project root directory.
+ */
+function findRootDir(dir)
+{
+  // On the first call, dir will not be defined. Assign it to the current
+  // directory.
+  if (typeof dir !== 'string' || dir.length === 0) {
+    dir = path.normalize(path.resolve(__dirname));
+  }
+
+  // Try to open a package.json file in the `dir` directory
+  var packageJSONPath = path.join(dir, 'package.json');
+  if (fs.existsSync(packageJSONPath)) {
+    try {
+      var content = require(packageJSONPath);
+
+      // if correct, return the dir
+      if (typeof content.dependencies === 'object' && PACKAGE_REPO_REGEX.test(content.dependencies[PACKAGE_NAME])) {
+        return dir;
+      }
+    } catch (e) { // Catch the error thrown if the package.json has an invalid syntax
+      console.log('[Warning] Invalid "' + packageJSONPath + '", try the parent directory.');
+    }
+  }
+
+  // Else if the package.json cannot be found / incorrect dir / incorrect syntax
+
+  // Determine the parent directory
+  var parentDir = path.resolve(path.join(dir, '..'));
+
+  // If `parentDir` is the same as `dir`, we've reach the disk root ('/' on most
+  // systems). Abort in this case.
+  if (dir === parentDir) {
+    return null;
+  }
+
+  // If no adequate package.json is found, try in the parent directory
+  return findRootDir(parentDir);
+}
+
+/**
+ * Return the directory containing the common files.
+ */
+function findCommonDir()
+{
+  return path.normalize(path.resolve(path.join(__dirname, '..', 'common')));
+}
+
+/**
+ * 1. Find the root/common directories (if can't find it, abort)
+ * 2. Create the symbolic links
+ */
+function main()
+{
+  var rootDir = findRootDir();
+  var commonDir = findCommonDir();
+  var symbolicLinks, sourcePath, destPath;
+
+  // Abort if cannot find either the root/common directory
+  if (typeof rootDir !== 'string' || rootDir.length === 0 ||
+      typeof commonDir !== 'string' || commonDir.length === 0) {
+    console.log('[Warning] Cannot determine common files source or destination directory.');
+    console.log('[Warning] Karma common files installation has been aborted.');
+    // This is not a critical error, just abort without obstructing the whole
+    // installation process.
+    return 0;
+  }
+
+  // Define the links to create
+  // symbolicLinks[sourcePath] = destPath;
+  symbolicLinks = {};
+  symbolicLinks[path.join(commonDir, 'editorconfig')] = path.join(rootDir, '.editorconfig');
+  symbolicLinks[path.join(commonDir, 'gitattributes')] = path.join(rootDir, '.gitattributes');
+  symbolicLinks[path.join(commonDir, 'jscs.json')] = path.join(rootDir, '.jscsrc');
+  symbolicLinks[path.join(commonDir, 'jshint.json')] = path.join(rootDir, '.jshintrc');
+  symbolicLinks[path.join(commonDir, 'coffeelint.json')] = path.join(rootDir, 'coffeelint.json');
+
+  // Browse each symbolic link and create it
+  for (var key in symbolicLinks) {
+    if (!(symbolicLinks.hasOwnProperty(key))) {
+      continue;
+    }
+
+    sourcePath = key;
+    destPath = symbolicLinks[key];
+    fs.symlink(sourcePath, destPath, function(err) {
+      if (!err) {
+        return;
+      }
+      console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+    });
+  }
+
+  // Everything's OK, exit with code 0
+  return 0;
+}
+
+return main();
