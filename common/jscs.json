@@ -110,5 +110,6 @@
   "requireLineFeedAtFileEnd": true,
   "maximumLineLength": 100,
   "requireCapitalizedConstructors": true,
-  "requireDotNotation": true
+  "requireDotNotation": true,
+  "disallowSpacesInsideParentheses": true
 }
