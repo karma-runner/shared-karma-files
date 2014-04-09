@@ -1,13 +1,11 @@
 /*
- * This script is called once the package is installed. It looks for the first
- * package.json file requiring this very package and use this directory as the
- * base directory to install the symbolic links.
+ * This script is called once the package is installed. It installs the symbolic
+ * links two directories above as this package will always be installed as a
+ * direct child.
  */
 
 var fs = require('fs');
 var path = require('path');
-
-var PACKAGE_REPO_REGEX = /:\/\/github.com\/karma-runner\/common(?:\.git)?/;
 
 var COMMON_DIR = 'common';
 
@@ -37,47 +35,13 @@ function getCurrentPackageName()
 }
 
 /**
- * Return the project root directory.
+ * Return the project root directory (three directories above).
  */
 function findRootDir(dir)
 {
-  // On the first call, dir will not be defined. Assign it to the current
-  // directory.
-  if (typeof dir !== 'string' || dir.length === 0) {
-    dir = path.normalize(path.resolve(__dirname));
-  }
-
-  // Try to open a package.json file in the `dir` directory
-  var packageJSONPath = path.join(dir, 'package.json');
-  if (fs.existsSync(packageJSONPath)) {
-    try {
-      var content = require(packageJSONPath);
-
-      // Fetch the current package name
-      var currentPackageName = getCurrentPackageName();
-
-      // if correct, return the dir
-      if (typeof content.dependencies === 'object' && PACKAGE_REPO_REGEX.test(content.dependencies[currentPackageName])) {
-        return dir;
-      }
-    } catch (e) { // Catch the error thrown if the package.json has an invalid syntax
-      console.log('[Warning] Invalid "' + packageJSONPath + '", try the parent directory.');
-    }
-  }
-
-  // Else if the package.json cannot be found / incorrect dir / incorrect syntax
-
-  // Determine the parent directory
-  var parentDir = path.resolve(path.join(dir, '..'));
-
-  // If `parentDir` is the same as `dir`, we've reached the disk root ('/' on
-  // most systems). Abort in this case.
-  if (dir === parentDir) {
-    return null;
-  }
-
-  // If no adequate package.json is found, try in the parent directory
-  return findRootDir(parentDir);
+  // ./root_dir/node_modules/common/bin/
+  //      ^    3            2      1 ^
+  return path.normalize(path.resolve(path.join(__dirname, '..', '..', '..')));
 }
 
 /**
@@ -101,7 +65,7 @@ function main()
   // Abort if cannot find either the root/common directory
   if (typeof rootDir !== 'string' || rootDir.length === 0 ||
       typeof commonDir !== 'string' || commonDir.length === 0) {
-    console.log('[Warning] Cannot determine common files source or destination directory.');
+    console.log('[Warning] Cannot determine the source or the destination directory.');
     console.log('[Warning] Karma common files installation has been aborted.');
     // This is not a critical error, just abort without obstructing the whole
     // installation process.
