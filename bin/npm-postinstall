@@ -7,8 +7,22 @@
 var fs = require('fs');
 var path = require('path');
 
-var PACKAGE_NAME = 'common';
 var PACKAGE_REPO_REGEX = /:\/\/github.com\/karma-runner\/common(?:\.git)?$/;
+
+var COMMON_DIR = 'common';
+
+// Define the links to create. The source files are relative to the common
+// directory of this package. The destination path are relative to root
+// directory of the package requiring the Karma common files.
+//
+// SYMBOLIC_LINKS[sourcePath] = destPath;
+var SYMBOLIC_LINKS = {
+  'editorconfig': '.editorconfig',
+  'gitattributes': '.gitattributes',
+  'jscs.json': '.jscsrc',
+  'jshint.json': '.jshintrc',
+  'coffeelint.json': 'coffeelint.json'
+};
 
 /**
  * This function returns the name of the current package. The package file will
@@ -39,8 +53,11 @@ function findRootDir(dir)
     try {
       var content = require(packageJSONPath);
 
+      // Fetch the current package name
+      var currentPackageName = getCurrentPackageName();
+
       // if correct, return the dir
-      if (typeof content.dependencies === 'object' && PACKAGE_REPO_REGEX.test(content.dependencies[PACKAGE_NAME])) {
+      if (typeof content.dependencies === 'object' && PACKAGE_REPO_REGEX.test(content.dependencies[currentPackageName])) {
         return dir;
       }
     } catch (e) { // Catch the error thrown if the package.json has an invalid syntax
@@ -53,8 +70,8 @@ function findRootDir(dir)
   // Determine the parent directory
   var parentDir = path.resolve(path.join(dir, '..'));
 
-  // If `parentDir` is the same as `dir`, we've reach the disk root ('/' on most
-  // systems). Abort in this case.
+  // If `parentDir` is the same as `dir`, we've reached the disk root ('/' on
+  // most systems). Abort in this case.
   if (dir === parentDir) {
     return null;
   }
@@ -68,7 +85,7 @@ function findRootDir(dir)
  */
 function findCommonDir()
 {
-  return path.normalize(path.resolve(path.join(__dirname, '..', 'common')));
+  return path.normalize(path.resolve(path.join(__dirname, '..', COMMON_DIR)));
 }
 
 /**
@@ -79,7 +96,7 @@ function main()
 {
   var rootDir = findRootDir();
   var commonDir = findCommonDir();
-  var symbolicLinks, sourcePath, destPath;
+  var sourcePath, destPath;
 
   // Abort if cannot find either the root/common directory
   if (typeof rootDir !== 'string' || rootDir.length === 0 ||
@@ -91,23 +108,14 @@ function main()
     return 0;
   }
 
-  // Define the links to create
-  // symbolicLinks[sourcePath] = destPath;
-  symbolicLinks = {};
-  symbolicLinks[path.join(commonDir, 'editorconfig')] = path.join(rootDir, '.editorconfig');
-  symbolicLinks[path.join(commonDir, 'gitattributes')] = path.join(rootDir, '.gitattributes');
-  symbolicLinks[path.join(commonDir, 'jscs.json')] = path.join(rootDir, '.jscsrc');
-  symbolicLinks[path.join(commonDir, 'jshint.json')] = path.join(rootDir, '.jshintrc');
-  symbolicLinks[path.join(commonDir, 'coffeelint.json')] = path.join(rootDir, 'coffeelint.json');
-
   // Browse each symbolic link and create it
-  for (var key in symbolicLinks) {
-    if (!(symbolicLinks.hasOwnProperty(key))) {
+  for (var key in SYMBOLIC_LINKS) {
+    if (!(SYMBOLIC_LINKS.hasOwnProperty(key))) {
       continue;
     }
 
-    sourcePath = key;
-    destPath = symbolicLinks[key];
+    sourcePath = path.join(commonDir, key);
+    destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
     fs.symlink(sourcePath, destPath, function(err) {
       if (!err) {
         return;
