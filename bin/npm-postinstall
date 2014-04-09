@@ -7,7 +7,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var PACKAGE_REPO_REGEX = /:\/\/github.com\/karma-runner\/common(?:\.git)?$/;
+var PACKAGE_REPO_REGEX = /:\/\/github.com\/karma-runner\/common(?:\.git)?/;
 
 var COMMON_DIR = 'common';
 
