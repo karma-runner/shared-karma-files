@@ -1,0 +1,95 @@
+/*
+ * This script is called once the package is installed. It installs the symbolic
+ * links two directories above as this package will always be installed as a
+ * direct child.
+ */
+
+var fs = require('fs');
+var path = require('path');
+
+var COMMON_DIR = 'common';
+
+// Define the links to create. The source files are relative to the common
+// directory of this package. The destination path are relative to root
+// directory of the package requiring the Karma common files.
+//
+// SYMBOLIC_LINKS[sourcePath] = destPath;
+var SYMBOLIC_LINKS = {
+  'editorconfig': '.editorconfig',
+  'gitattributes': '.gitattributes',
+  'jscs.json': '.jscsrc',
+  'jshint.json': '.jshintrc',
+  'coffeelint.json': 'coffeelint.json'
+};
+
+/**
+ * This function returns the name of the current package. The package file will
+ * only be loaded once due to the Node.js require mechanism.
+ */
+function getCurrentPackageName()
+{
+  var currentPackageJSONPath = path.normalize(path.resolve(path.join(__dirname, '..', 'package.json')));
+  var packageJSON = require(currentPackageJSONPath);
+
+  return packageJSON.name;
+}
+
+/**
+ * Return the project root directory (three directories above).
+ */
+function findRootDir(dir)
+{
+  // ./root_dir/node_modules/common/bin/
+  //      ^    3            2      1 ^
+  return path.normalize(path.resolve(path.join(__dirname, '..', '..', '..')));
+}
+
+/**
+ * Return the directory containing the common files.
+ */
+function findCommonDir()
+{
+  return path.normalize(path.resolve(path.join(__dirname, '..', COMMON_DIR)));
+}
+
+/**
+ * 1. Find the root/common directories (if can't find it, abort)
+ * 2. Create the symbolic links
+ */
+function main()
+{
+  var rootDir = findRootDir();
+  var commonDir = findCommonDir();
+  var sourcePath, destPath;
+
+  // Abort if cannot find either the root/common directory
+  if (typeof rootDir !== 'string' || rootDir.length === 0 ||
+      typeof commonDir !== 'string' || commonDir.length === 0) {
+    console.log('[Warning] Cannot determine the source or the destination directory.');
+    console.log('[Warning] Karma common files installation has been aborted.');
+    // This is not a critical error, just abort without obstructing the whole
+    // installation process.
+    return 0;
+  }
+
+  // Browse each symbolic link and create it
+  for (var key in SYMBOLIC_LINKS) {
+    if (!(SYMBOLIC_LINKS.hasOwnProperty(key))) {
+      continue;
+    }
+
+    sourcePath = path.join(commonDir, key);
+    destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
+    fs.symlink(sourcePath, destPath, function(err) {
+      if (!err) {
+        return;
+      }
+      console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+    });
+  }
+
+  // Everything's OK, exit with code 0
+  return 0;
+}
+
+return main();
