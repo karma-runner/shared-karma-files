@@ -80,11 +80,15 @@ function main()
 
     sourcePath = path.join(commonDir, key);
     destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
-    fs.symlink(sourcePath, destPath, function(err) {
-      if (!err) {
-        return;
-      }
-      console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+    // Delete the file in case it already exists
+    fs.unlink(destPath, function() {
+      // Create the symlink
+      fs.symlink(sourcePath, destPath, function(err) {
+        if (!err) {
+          return;
+        }
+        console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+      });
     });
   }
 
