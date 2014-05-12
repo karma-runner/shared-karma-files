@@ -60,7 +60,6 @@ function main()
 {
   var rootDir = findRootDir();
   var commonDir = findCommonDir();
-  var sourcePath, destPath;
 
   // Abort if cannot find either the root/common directory
   if (typeof rootDir !== 'string' || rootDir.length === 0 ||
@@ -78,18 +77,22 @@ function main()
       continue;
     }
 
-    sourcePath = path.join(commonDir, key);
-    destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
-    // Delete the file in case it already exists
-    fs.unlink(destPath, function() {
-      // Create the symlink
-      fs.symlink(sourcePath, destPath, function(err) {
-        if (!err) {
-          return;
-        }
-        console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+    // Add a scope to avoid main function scope pollution
+    (function() {
+      var sourcePath = path.join(commonDir, key);
+      var destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
+
+      // Delete the file in case it already exists
+      fs.unlink(destPath, function() {
+        // Create the symlink
+        fs.symlink(sourcePath, destPath, function(err) {
+          if (!err) {
+            return;
+          }
+          console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+        });
       });
-    });
+    })();
   }
 
   // Everything's OK, exit with code 0
