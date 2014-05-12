@@ -4,6 +4,7 @@
  * direct child.
  */
 
+var exec = require('child_process').exec;
 var fs = require('fs');
 var path = require('path');
 
@@ -80,16 +81,23 @@ function main()
     // Add a scope to avoid main function scope pollution
     (function() {
       var sourcePath = path.join(commonDir, key);
-      var destPath = path.join(rootDir, SYMBOLIC_LINKS[key]);
+      var destFile = SYMBOLIC_LINKS[key];
+      var destPath = path.join(rootDir, destFile);
 
       // Delete the file in case it already exists
       fs.unlink(destPath, function() {
         // Create the symlink
         fs.symlink(sourcePath, destPath, function(err) {
-          if (!err) {
+          if (err) {
+            console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
             return;
           }
-          console.log('[Warning] Cannot symlink the Karma common file "' + sourcePath + '" to "' + destPath + '".');
+
+          // Try to ignore the newly created file to avoid its presence as an
+          // untracked/modified file.
+          // If git is not present on the system, the execution will abort. But
+          // in this case the problem does not exist.
+          exec('cd \'' + rootDir + '\' && ' + 'git update-index --assume-unchanged \'' + destFile + '\'');
         });
       });
     })();
