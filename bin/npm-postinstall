@@ -8,8 +8,6 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 var path = require('path');
 
-var COMMON_DIR = 'common';
-
 // Define the links to create. The source files are relative to the common
 // directory of this package. The destination path are relative to root
 // directory of the package requiring the Karma common files.
@@ -50,7 +48,7 @@ function findRootDir(dir)
  */
 function findCommonDir()
 {
-  return path.normalize(path.resolve(path.join(__dirname, '..', COMMON_DIR)));
+  return path.normalize(path.resolve(path.join(__dirname, '..', 'common')));
 }
 
 /**
