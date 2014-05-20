@@ -95,7 +95,9 @@ function main()
           // untracked/modified file.
           // If git is not present on the system, the execution will abort. But
           // in this case the problem does not exist.
-          exec('cd \'' + rootDir + '\' && ' + 'git update-index --assume-unchanged \'' + destFile + '\'');
+          exec('git update-index --assume-unchanged \'' + destFile + '\'', {
+            cwd: rootDir
+          });
         });
       });
     })();
