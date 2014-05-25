@@ -1,7 +1,7 @@
 {
-  "name": "common",
+  "name": "shared-karma-files",
   "version": "0.0.0",
-  "description": "This repository centralizes all the common files existing in the Karma projects.",
+  "description": "This repository centralizes all the shared files existing in the Karma projects.",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/karma-runner/common.git"
+    "url": "git://github.com/karma-runner/shared-karma-files.git"
   },
   "author": "Aymeric Beaumet <aymeric@beaumet.me>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/karma-runner/common/issues"
+    "url": "https://github.com/karma-runner/shared-karma-files/issues"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
@@ -23,5 +23,5 @@
     "grunt-jscs-checker": "~0.4.1",
     "grunt-coffeelint": "0.0.8"
   },
-  "homepage": "https://github.com/karma-runner/common"
+  "homepage": "https://github.com/karma-runner/shared-karma-files"
 }
