@@ -17,11 +17,7 @@
     "url": "https://github.com/karma-runner/shared-karma-files/issues"
   },
   "devDependencies": {
-    "grunt": "~0.4.4",
-    "grunt-contrib-jshint": "~0.9.2",
-    "deepmerge": "~0.2.7",
-    "grunt-jscs-checker": "~0.4.1",
-    "grunt-coffeelint": "0.0.8"
+    "grunt": "~0.4.4"
   },
   "homepage": "https://github.com/karma-runner/shared-karma-files"
 }
