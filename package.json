@@ -1,8 +1,7 @@
 {
   "name": "shared-karma-files",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "This repository centralizes all the shared files existing in the Karma projects.",
-  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node ./bin/npm-postinstall"
