@@ -14,13 +14,8 @@ npm install karma-shared-files --save-dev
 ### Shared folder
 
 The files in the `shared` folder are meant to be directly linked inside your
-project without any modification.
-
-> Tools documentations:
-> - [CoffeeLint][coffeelint-doc]
-> - [EditorConfig][editorconfig-doc]
-> - [JSCS][jscs-doc]
-> - [JSHint][jshint-doc]
+project without any modification. For more information, see the karmaSharedFiles
+[option](#options).
 
 ### Models folder
 
@@ -29,8 +24,7 @@ needs.
 
 ## Options
 
-### Options
-#### karmaSharedFiles
+### karmaSharedFiles
 **Type:** Object
 
 You have to provide an object which will be used to determined which files have
@@ -40,17 +34,34 @@ The keys represent which files you want to link (relatively to the `./shared`
 folder in this very repository), the values represent where you want to link
 them (relatively to your `package.json`).
 
-## Example
+## Examples
+
+This example shows how to link the `editorconfig` from the shared folder to the
+`.editorconfig` endpoint at your project root.
 
 ```javascript
-karma-shared-files: {
+karmaSharedFiles: {
   "editorconfig": ".editorconfig"
+}
+```
+
+This example shows how to link the `integration-tests.sh` file to a specific
+folder.
+
+```javascript
+karmaSharedFiles: {
+  "test/integration-tests.sh": "test/integration-tests.sh"
 }
 ```
 
 ## Notes
 
 - This repository is intended to be used by Karma developers.
+- Tools documentation:
+  - [CoffeeLint][coffeelint-doc]
+  - [EditorConfig][editorconfig-doc]
+  - [JSCS][jscs-doc]
+  - [JSHint][jshint-doc]
 
 ## Contributors
 
