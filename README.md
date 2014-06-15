@@ -24,7 +24,7 @@ needs.
 
 ## Options
 
-### karmaSharedFiles
+### sharedKarmaFiles
 **Type:** Object
 
 You have to provide an object which will be used to determined which files have
@@ -40,7 +40,7 @@ This example shows how to link the `editorconfig` from the shared folder to the
 `.editorconfig` endpoint at your project root.
 
 ```javascript
-karmaSharedFiles: {
+sharedKarmaFiles: {
   "editorconfig": ".editorconfig"
 }
 ```
@@ -49,7 +49,7 @@ This example shows how to link the `integration-tests.sh` file to a specific
 folder.
 
 ```javascript
-karmaSharedFiles: {
+sharedKarmaFiles: {
   "test/integration-tests.sh": "test/integration-tests.sh"
 }
 ```
