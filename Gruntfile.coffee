@@ -7,13 +7,13 @@ module.exports = (grunt)->
     pkgFile: 'package.json'
 
     files:
-      bin: ['bin/npm-postinstall']
+      all: ['bin/npm-postinstall', 'lib/**/*.js']
 
     # JSHint
     jshint:
       node:
         # The node files you want to check
-        src: ['<%= files.bin %>']
+        src: ['<%= files.all %>']
         options: (deepmerge (require resolveShared 'jshint-node.json'),
           # Custom node files configuration (override the default node configuration file)
           strict: true
@@ -26,11 +26,20 @@ module.exports = (grunt)->
     # JSCS
     jscs:
       # The files you want to check
-      all: ['<%= files.bin %>']
+      all: ['<%= files.all %>']
       options:
         config: resolveShared 'jscs.json'
         # Custom configuration (override the default configuration file)
         disallowSpaceAfterKeywords: []
+
+    simplemocha:
+      options:
+        ui: 'bdd'
+        reporter: 'dot'
+      src: [
+        'test/mocha-globals.coffee',
+        'test/**/*.coffee'
+      ]
 
     # CoffeeLint
     coffeelint:
@@ -42,9 +51,15 @@ module.exports = (grunt)->
         max_line_length:
           value: 100
 
+    watch:
+      test:
+        files: ['<%= files.all %>', '<%= simplemocha.src %>']
+        tasks: 'test'
+
   # Load tasks
   require('load-grunt-tasks') grunt
 
   # Register tasks
   @registerTask 'lint', ['coffeelint', 'jshint', 'jscs']
-  @registerTask 'default', ['lint']
+  @registerTask 'test', ['simplemocha']
+  @registerTask 'default', ['lint', 'test']

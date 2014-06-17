@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "This repository centralizes all the shared files existing in the Karma projects.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "grunt test",
     "postinstall": "node ./bin/npm-postinstall"
   },
   "repository": {
@@ -16,12 +16,17 @@
     "url": "https://github.com/karma-runner/shared-karma-files/issues"
   },
   "devDependencies": {
+    "chai": "^1.9.1",
     "deepmerge": "^0.2.7",
     "grunt": "~0.4.4",
     "grunt-coffeelint": "~0.0.6",
     "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-jscs-checker": "~0.4.0",
-    "load-grunt-tasks": "~0.2.1"
+    "grunt-simple-mocha": "^0.4.0",
+    "load-grunt-tasks": "~0.2.1",
+    "mocks": "~0.0.10",
+    "sinon": "^1.10.2"
   },
   "homepage": "https://github.com/karma-runner/shared-karma-files"
 }
