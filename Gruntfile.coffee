@@ -1,20 +1,24 @@
 deepmerge = require 'deepmerge'
 
-module.exports = ->
+module.exports = (grunt)->
+  resolveShared = (fileName)-> require('path').join './', 'shared', fileName
 
   @initConfig
     pkgFile: 'package.json'
+
+    files:
+      bin: ['bin/npm-postinstall']
 
     # JSHint
     jshint:
       node:
         # The node files you want to check
-        src: ['bin/**/*.js']
-        options: (deepmerge (require './common/jshint-node.json'),
+        src: ['<%= files.bin %>']
+        options: (deepmerge (require resolveShared 'jshint-node.json'),
           # Custom node files configuration (override the default node configuration file)
           strict: true
         )
-      options: (deepmerge (require './common/jshint.json'),
+      options: (deepmerge (require resolveShared 'jshint.json'),
         # Custom global configuration (override the default global configuration file)
           strict: true
       )
@@ -22,9 +26,9 @@ module.exports = ->
     # JSCS
     jscs:
       # The files you want to check
-      all: ['bin/**/*.js']
+      all: ['<%= files.bin %>']
       options:
-        config: './common/jscs.json'
+        config: resolveShared 'jscs.json'
         # Custom configuration (override the default configuration file)
         disallowSpaceAfterKeywords: []
 
@@ -33,15 +37,13 @@ module.exports = ->
       # The files you want to check
       all: ['Gruntfile.coffee']
       options:
-        configFile: './common/coffeelint.json'
+        configFile: resolveShared 'coffeelint.json'
         # Custom configuration (override the default configuration file)
         max_line_length:
           value: 100
 
   # Load tasks
-  @loadNpmTasks 'grunt-contrib-jshint'
-  @loadNpmTasks 'grunt-jscs-checker'
-  @loadNpmTasks 'grunt-coffeelint'
+  require('load-grunt-tasks') grunt
 
   # Register tasks
   @registerTask 'lint', ['coffeelint', 'jshint', 'jscs']
